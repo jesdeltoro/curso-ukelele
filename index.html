@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curso Interactivo de Ukelele - De Cero a Músico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: #e0f2fe;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --radius: 14px;
+      --shadow: 0 10px 25px -5px rgba(0,0,0,0.06), 0 8px 10px -6px rgba(0,0,0,0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral */
+    aside {
+      width: 300px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1.75rem 1.25rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    .brand-icon {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand span {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .nav-header {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin-top: 0.8rem;
+      margin-bottom: 0.3rem;
+      padding-left: 0.5rem;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      color: #cbd5e1;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: #1e293b;
+      color: #38bdf8;
+    }
+
+    .nav-btn.active {
+      background: #0284c7;
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Área Principal */
+    main {
+      flex: 1;
+      padding: 2.5rem 3rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header.main-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .header-title h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.2rem;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-top: 0.25rem;
+    }
+
+    .action-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    /* Módulos de Contenido */
+    .module-section {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .module-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .badge-pill {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-blue { background: #e0f2fe; color: #0369a1; }
+    .badge-amber { background: #fef3c7; color: #92400e; }
+
+    /* Metrónomo interactivo */
+    .metronome-box {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: white;
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .metronome-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metronome-header h3 {
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .bpm-display {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #38bdf8;
+      line-height: 1;
+    }
+
+    .bpm-unit {
+      font-size: 1rem;
+      color: #94a3b8;
+      margin-left: 0.25rem;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .bpm-slider {
+      flex: 1;
+      height: 8px;
+      accent-color: #38bdf8;
+      cursor: pointer;
+    }
+
+    .metro-controls {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 0.7rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: #0284c7;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #0369a1;
+      transform: translateY(-1px);
+    }
+
+    .btn-accent {
+      background: #f59e0b;
+      color: white;
+    }
+    .btn-accent:hover {
+      background: #d97706;
+    }
+
+    .btn-secondary {
+      background: #334155;
+      color: white;
+    }
+    .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .beat-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #475569;
+      transition: all 0.05s ease;
+      display: inline-block;
+    }
+
+    .beat-indicator.pulse {
+      background: #38bdf8;
+      transform: scale(1.4);
+      box-shadow: 0 0 12px #38bdf8;
+    }
+
+    /* Visor de Acordes interactivo */
+    .chord-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .chord-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .chord-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 20px -8px rgba(0,0,0,0.1);
+      border-color: #38bdf8;
+    }
+
+    .chord-card.active {
+      border-color: #0284c7;
+      background: #f0f9ff;
+    }
+
+    .chord-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .chord-alias {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 0.75rem;
+    }
+
+    .fretboard-svg {
+      width: 120px;
+      height: 140px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    /* Simulador de Rasgueo */
+    .strum-pattern-box {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .strum-beats {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 0.75rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .strum-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      min-width: 55px;
+      font-weight: 700;
+      transition: all 0.15s;
+    }
+
+    .strum-step.highlight {
+      background: #38bdf8;
+      color: white;
+      border-color: #0284c7;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    }
+
+    .strum-arrow {
+      font-size: 1.3rem;
+      line-height: 1;
+      margin-top: 0.25rem;
+    }
+
+    .strum-label {
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .strum-step.highlight .strum-label {
+      color: white;
+    }
+
+    /* Videoteca Cards */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .video-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s;
+    }
+
+    .video-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+    }
+
+    .video-thumb {
+      background: #1e293b;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      position: relative;
+    }
+
+    .play-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .video-content {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .video-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .video-author {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-bottom: 0.8rem;
+    }
+
+    /* Letras y Acordes */
+    .song-box {
+      font-family: 'Space Grotesk', monospace;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 1.25rem;
+      white-space: pre-wrap;
+      line-height: 1.8;
+      font-size: 0.95rem;
+      margin: 1rem 0;
+    }
+
+    .chord-tag {
+      background: #0284c7;
+      color: white;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      display: inline-block;
+    }
+
+    /* Calendario de 30 días */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .cal-day {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cal-day:hover {
+      border-color: #38bdf8;
+    }
+
+    .cal-day.completed {
+      background: #ecfdf5;
+      border-color: #10b981;
+    }
+
+    .cal-day.completed .day-num {
+      color: #059669;
+    }
+
+    .day-num {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #334155;
+    }
+
+    .day-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      main {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA LATERAL DE NAVEGACIÓN -->
+  <aside>
+    <div class="brand">
+      <div class="brand-icon">🌴</div>
+      <div>
+        <h1>Ukelele Express</h1>
+        <span>Curso Completo & Interactivo</span>
+      </div>
+    </div>
+
+    <nav>
+      <div class="nav-header">Módulos del Curso</div>
+      <button class="nav-btn active" onclick="showModule('intro')">📖 0. Conoce tu Ukelele</button>
+      <button class="nav-btn" onclick="showModule('mod1')">🎵 1. Primeros Acordes (C, Am, F)</button>
+      <button class="nav-btn" onclick="showModule('mod2')">🌊 2. Rasgueo Calypso & Sol (G)</button>
+      <button class="nav-btn" onclick="showModule('mod3')">⚡ 3. Chuck, Cejilla & Arpegios</button>
+      <button class="nav-btn" onclick="showModule('songs')">🎤 4. Cancionero Paso a Paso</button>
+
+      <div class="nav-header">Herramientas y Práctica</div>
+      <button class="nav-btn" onclick="showModule('chords')">🎸 Diccionario de Acordes</button>
+      <button class="nav-btn" onclick="showModule('videos')">📺 Videoteca de YouTube</button>
+      <button class="nav-btn" onclick="showModule('plan')">📅 Plan de 30 Días</button>
+    </nav>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+
+    <!-- METRÓNOMO INTEGRADO FLOTANTE -->
+    <div class="metronome-box">
+      <div class="metronome-header">
+        <h3>⏱️ Metrónomo & Ritmo de Estudio</h3>
+        <span class="beat-indicator" id="metroLight"></span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+        <span class="bpm-display" id="bpmValue">80</span>
+        <span class="bpm-unit">BPM (Pulsaciones por minuto)</span>
+      </div>
+      <div class="slider-container">
+        <span style="font-size: 0.8rem; color:#94a3b8">Lento (40)</span>
+        <input type="range" min="40" max="180" value="80" class="bpm-slider" id="bpmSlider" oninput="updateBpm(this.value)">
+        <span style="font-size: 0.8rem; color:#94a3b8">Rápido (180)</span>
+      </div>
+      <div class="metro-controls">
+        <button class="btn btn-primary" id="metroBtn" onclick="toggleMetronome()">▶ Iniciar Metrónomo</button>
+        <button class="btn btn-secondary" onclick="setBpm(60)">60 BPM (Práctica)</button>
+        <button class="btn btn-secondary" onclick="setBpm(100)">100 BPM (Pop)</button>
+        <button class="btn btn-secondary" onclick="setBpm(120)">120 BPM (Rápido)</button>
+      </div>
+    </div>
+
+    <!-- MÓDULO 0: INTRO -->
+    <div id="intro" class="module-section active">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Módulo 0: Conoce tu Ukelele</h2>
+          <p>Anatomía, afinación estándar gCEA y postura ergonómica.</p>
+        </div>
+        <div class="action-badge">⭐ Nivel Inicial</div>
+      </header>
+
+      <div class="card">
+        <h3 class="card-title">1. ¿Qué Ukelele Tienes y Cómo se Afina?</h3>
+        <p>El ukelele cuenta con 4 cuerdas y una afinación <strong>reentrante estándar: gCEA</strong> (Sol - Do - Mi - La). La 4ª cuerda (Sol) suena aguda, lo que le da su tono tan risueño y característico.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 8px;">
+            <strong>4ª Cuerda (Arriba):</strong>
+            <div style="font-size: 1.4rem; color: #0284c7; font-weight: 800;">Sol (G)</div>
+            <small style="color: #64748b;">Afinación aguda (392 Hz)</small>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 8px;">
+            <strong>3ª Cuerda:</strong>
+            <div style="font-size: 1.4rem; color: #0284c7; font-weight: 800;">Do (C)</div>
+            <small style="color: #64748b;">Nota más grave (261.6 Hz)</small>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 8px;">
+            <strong>2ª Cuerda:</strong>
+            <div style="font-size: 1.4rem; color: #0284c7; font-weight: 800;">Mi (E)</div>
+            <small style="color: #64748b;">(329.6 Hz)</small>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 8px;">
+            <strong>1ª Cuerda (Suelo):</strong>
+            <div style="font-size: 1.4rem; color: #0284c7; font-weight: 800;">La (A)</div>
+            <small style="color: #64748b;">(440 Hz)</small>
+          </div>
+        </div>
+
+        <div style="background: #eff6ff; border-left: 4px solid #0284c7; padding: 1rem; border-radius: 0 8px 8px 0;">
+          <strong>💡 Consejo Pro:</strong> Descarga la app gratuita <strong>GuitarTuna</strong> en tu móvil. Te guiará cuerda a cuerda mediante el micrófono diciendo si debes tensar o aflojar cada clavija.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">2. Cómo sostener el ukelele y posición de dedos</h3>
+        <ul style="padding-left: 1.2rem; line-height: 1.8;">
+          <li><strong>Mano derecha:</strong> Apoya el antebrazo en la parte superior del cuerpo. Rasguea justo donde termina el mástil y empieza el cuerpo acústico (alrededor del traste 12).</li>
+          <li><strong>Mano izquierda:</strong> El pulgar reposa detrás del mástil (como una pinza suave). Los dedos deben caer <strong>arqueados en punta</strong> como pequeños martillitos sobre las cuerdas para no tocar cuerdas adyacentes.</li>
+          <li><strong>Uñas cortas en la mano izquierda:</strong> Imprescindible para que la yema pise a fondo sin que la uña choque con la madera del diapasón.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- MÓDULO 1 -->
+    <div id="mod1" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Módulo 1: Tus Primeros 3 Acordes</h2>
+          <p>Aprende Do (C), La menor (Am) y Fa (F) con tu primer ritmo continuo.</p>
+        </div>
+        <div class="action-badge">🔥 Básico</div>
+      </header>
+
+      <div class="card">
+        <h3 class="card-title">Los Tres Acordes Mágicos</h3>
+        <p>Haz clic en cada acorde para escuchar cómo suena y ver la posición de los dedos:</p>
+        
+        <div class="chord-grid">
+          <div class="chord-card" onclick="playChord('C')">
+            <div class="chord-name">C</div>
+            <div class="chord-alias">Do Mayor</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgC"></svg>
+            <small>Dedo 3 (Anular) • Traste 3</small>
+          </div>
+          <div class="chord-card" onclick="playChord('Am')">
+            <div class="chord-name">Am</div>
+            <div class="chord-alias">La menor</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgAm"></svg>
+            <small>Dedo 2 (Medio) • Traste 2</small>
+          </div>
+          <div class="chord-card" onclick="playChord('F')">
+            <div class="chord-name">F</div>
+            <div class="chord-alias">Fa Mayor</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgF"></svg>
+            <small>Dedos 1 y 2 • Traste 1 y 2</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">El Rasgueo Pop Básico (Down - DownUp)</h3>
+        <p>Rasguea usando la uña del dedo índice para bajar y la yema para subir. Movimiento suave desde la muñeca:</p>
+        
+        <div class="strum-pattern-box">
+          <strong>Patrón rítmico (4/4):</strong>
+          <div class="strum-beats">
+            <div class="strum-step"><span class="strum-label">Pulso 1</span><span class="strum-arrow">↓</span><small>D</small></div>
+            <div class="strum-step"><span class="strum-label">&</span><span>-</span><small>aire</small></div>
+            <div class="strum-step"><span class="strum-label">Pulso 2</span><span class="strum-arrow">↓</span><small>D</small></div>
+            <div class="strum-step"><span class="strum-label">&</span><span class="strum-arrow">↑</span><small>U</small></div>
+            <div class="strum-step"><span class="strum-label">Pulso 3</span><span class="strum-arrow">↓</span><small>D</small></div>
+            <div class="strum-step"><span class="strum-label">&</span><span>-</span><small>aire</small></div>
+            <div class="strum-step"><span class="strum-label">Pulso 4</span><span class="strum-arrow">↓</span><small>D</small></div>
+            <div class="strum-step"><span class="strum-label">&</span><span class="strum-arrow">↑</span><small>U</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 2 -->
+    <div id="mod2" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Módulo 2: El Rasgueo Calypso e Isla</h2>
+          <p>Domina el acorde Sol (G) y el rasgueo más famoso del mundo del ukelele.</p>
+        </div>
+        <div class="action-badge">🌴 Esencial</div>
+      </header>
+
+      <div class="card">
+        <h3 class="card-title">El Patrón Calypso (Island Strum)</h3>
+        <p>Memoriza la frase rítmica: <em>"BA-JO... BA-JO-SU-BO... SU-BO-BA-JO-SU-BO"</em> (D - DU - UDU):</p>
+
+        <div class="strum-pattern-box">
+          <div class="strum-beats">
+            <div class="strum-step"><span class="strum-label">1</span><span class="strum-arrow">↓</span><span>D</span></div>
+            <div class="strum-step"><span class="strum-label">y</span><span>-</span><span>aire</span></div>
+            <div class="strum-step"><span class="strum-label">2</span><span class="strum-arrow">↓</span><span>D</span></div>
+            <div class="strum-step"><span class="strum-label">y</span><span class="strum-arrow">↑</span><span>U</span></div>
+            <div class="strum-step" style="opacity: 0.4;"><span class="strum-label">(3)</span><span>(paso)</span><span>aire</span></div>
+            <div class="strum-step"><span class="strum-label">y</span><span class="strum-arrow">↑</span><span>U</span></div>
+            <div class="strum-step"><span class="strum-label">4</span><span class="strum-arrow">↓</span><span>D</span></div>
+            <div class="strum-step"><span class="strum-label">y</span><span class="strum-arrow">↑</span><span>U</span></div>
+          </div>
+        </div>
+
+        <div class="chord-grid">
+          <div class="chord-card" onclick="playChord('G')">
+            <div class="chord-name">G</div>
+            <div class="chord-alias">Sol Mayor (Triángulo)</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgG"></svg>
+            <small>Dedos 1, 2 y 3</small>
+          </div>
+          <div class="chord-card" onclick="playChord('Em')">
+            <div class="chord-name">Em</div>
+            <div class="chord-alias">Mi menor (Escalera)</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgEm"></svg>
+            <small>Dedos 1, 2 y 3</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Canción Práctica: Riptide (Vance Joy)</h3>
+        <p>Progresión en bucle: <span class="chord-tag">Am</span> &rarr; <span class="chord-tag">G</span> &rarr; <span class="chord-tag">C</span> (C dura el doble):</p>
+        <div class="song-box">
+[Am] I was scared of [G] dentists and the [C] dark
+[Am] I was scared of [G] pretty girls and [C] starting conversations
+[Am] Oh, all my [G] friends are turning [C] green
+You're the [Am] magician's assistant in their [G] dreams... [C]
+
+[Estribillo]:
+[Am] Lady, [G] running down to the [C] riptide
+Taken away to the [Am] dark side
+[G] I wanna be your [C] left hand man
+        </div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 3 -->
+    <div id="mod3" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Módulo 3: Ritmo Percusivo, Cejillas y Arpegios</h2>
+          <p>Técnica del Chuck apagado, mini-cejilla de Si bemol (Bb) y fingerpicking.</p>
+        </div>
+        <div class="action-badge">🚀 Intermedio</div>
+      </header>
+
+      <div class="card">
+        <h3 class="card-title">La Técnica del "Chuck" (Apagado con Palma)</h3>
+        <p>Consiste en rasguear hacia abajo y, de forma instantánea, posar el lateral de la palma o base del pulgar sobre las cuerdas para detener la vibración creando un chasquido rítmico ("chik"):</p>
+        <div style="background: #fdf2f8; border: 1px solid #fbcfe8; padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+          <strong>Patrón Pop Percusivo:</strong><br>
+          Pulso 1: <strong>Abajo suave (D)</strong> | Pulso 2: <strong>CHUCK (X)</strong> | Pulso 3: <strong>Abajo suave (D)</strong> | Pulso 4: <strong>CHUCK (X)</strong>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Acordes con Carácter</h3>
+        <div class="chord-grid">
+          <div class="chord-card" onclick="playChord('Dm')">
+            <div class="chord-name">Dm</div>
+            <div class="chord-alias">Re menor</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgDm"></svg>
+            <small>Dedos 1, 2 y 3</small>
+          </div>
+          <div class="chord-card" onclick="playChord('G7')">
+            <div class="chord-name">G7</div>
+            <div class="chord-alias">Sol Séptima</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgG7"></svg>
+            <small>Acorde bluesero</small>
+          </div>
+          <div class="chord-card" onclick="playChord('Bb')">
+            <div class="chord-name">Bb</div>
+            <div class="chord-alias">Si bemol (Mini-cejilla)</div>
+            <svg class="fretboard-svg" viewBox="0 0 100 120" id="svgBb"></svg>
+            <small>Dedo 1 pisa 2 cuerdas</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANCIONERO -->
+    <div id="songs" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Cancionero Práctico Paso a Paso</h2>
+          <p>Repertorio completo con letras, cifrado de acordes y tempos sugeridos.</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h3 class="card-title">1. Somewhere Over The Rainbow - Israel Kamakawiwoʻole</h3>
+        <p><strong>Ritmo:</strong> Calypso Strum suave • <strong>Acordes:</strong> C, Em, F, G, Am</p>
+        <div class="song-box">
+[Intro]: C - Em - Am - F | C - G - Am - F
+
+[C] Somewhere [Em] over the rainbow
+[F] Way up [C] high
+[F] And the [C] dreams that you dream of
+[G] Once in a lulla-[Am]-by... [F]
+
+[C] Somewhere [Em] over the rainbow
+[F] Blue birds [C] fly
+[F] And the [C] dreams that you dream of
+[G] Dreams really do come [Am] true... [F]
+
+[C] Someday I'll wish upon a star
+And [G] wake up where the clouds are far be-[Am]hind [F] me
+Where [C] troubles melt like lemon drops
+[G] High above the chimney tops
+That's [Am] where you'll [F] find me.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">2. Stand By Me - Ben E. King</h3>
+        <p><strong>Ritmo:</strong> Pop básico / Rasgueo hacia abajo • <strong>Acordes:</strong> C, Am, F, G</p>
+        <div class="song-box">
+[C] When the night has come
+[Am] And the land is dark
+And the [F] moon is the [G] only light we'll [C] see
+
+No I [C] won't be afraid, no I [Am] won't be afraid
+Just as [F] long as you [G] stand, stand by [C] me
+
+So darling, darling, [C] stand by me, oh [Am] stand by me
+Oh [F] stand, [G] stand by me, [C] stand by me.
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">3. Limón y Sal - Julieta Venegas</h3>
+        <p><strong>Ritmo:</strong> Calypso Strum alegre • <strong>Acordes:</strong> C, G, Am, F</p>
+        <div class="song-box">
+[C] Tengo que confesar que a veces
+[G] No me gusta tu forma de ser
+[Am] Luego te me desapareces
+[F] Y no entiendo muy bien por qué
+
+[C] Yo te quiero con limón y sal
+[G] Yo te quiero tal y como estás
+[Am] No hace falta cambiarte nada
+[F] Yo te quiero tal y como estás...
+        </div>
+      </div>
+    </div>
+
+    <!-- DICCIONARIO DE ACORDES -->
+    <div id="chords" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Diccionario Gráfico de Acordes</h2>
+          <p>Toca cualquier tarjeta para escuchar la sonoridad del acorde sintetizada.</p>
+        </div>
+      </header>
+
+      <div class="chord-grid" id="fullChordGrid">
+        <!-- Generado dinámicamente con JavaScript -->
+      </div>
+    </div>
+
+    <!-- VIDEOTECA -->
+    <div id="videos" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Videoteca Curada de YouTube</h2>
+          <p>Accede directamente a los mejores tutoriales en vídeo seleccionados.</p>
+        </div>
+      </header>
+
+      <div class="video-grid">
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Clase 1: Tipos, Partes y Cómo Sostener el Ukelele</div>
+            <div class="video-author">Guitarraviva (Carlos Asensio)</div>
+            <a href="https://www.youtube.com/watch?v=QXZAAeZcS6o" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Cómo Afinar el Ukelele Fácilmente</div>
+            <div class="video-author">Guitarraviva</div>
+            <a href="https://www.youtube.com/watch?v=52YtJtS_5pU" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Clase 3: Primeros Acordes (C y Am)</div>
+            <div class="video-author">Guitarraviva</div>
+            <a href="https://www.youtube.com/watch?v=-cmMxGQH2rk" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Clase 4: Acordes Fa y Sol + Primera Canción</div>
+            <div class="video-author">Guitarraviva</div>
+            <a href="https://www.youtube.com/watch?v=sTxIBShyW0A" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Rasgueo Calypso Paso a Paso</div>
+            <div class="video-author">Fatima & Ukepop</div>
+            <a href="https://www.youtube.com/watch?v=xvSpNUalfcY" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Somewhere Over The Rainbow (Tutorial)</div>
+            <div class="video-author">Marta Burgos</div>
+            <a href="https://www.youtube.com/watch?v=des_sYmUyTI" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Island Strum Technique Tutorial</div>
+            <div class="video-author">Ukulele Tricks</div>
+            <a href="https://www.youtube.com/watch?v=s5R5tG2hV8c" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Ver en YouTube</a>
+          </div>
+        </div>
+
+        <div class="video-card">
+          <div class="video-thumb"><div class="play-circle">▶</div></div>
+          <div class="video-content">
+            <div class="video-title">Tutorial de Riptide en Español</div>
+            <div class="video-author">Búsqueda seleccionada</div>
+            <a href="https://www.youtube.com/results?search_query=riptide+vance+joy+tutorial+ukelele+espanol" target="_blank" class="btn btn-primary" style="font-size: 0.85rem; justify-content: center;">Buscar Tutorial</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAN DE 30 DÍAS -->
+    <div id="plan" class="module-section">
+      <header class="main-header">
+        <div class="header-title">
+          <h2>Plan de Entrenamiento de 30 Días</h2>
+          <p>15 minutos diarios de práctica guiada. Haz clic en cada día al completarlo.</p>
+        </div>
+      </header>
+
+      <div class="card">
+        <h3 class="card-title">Tu Progreso de Práctica</h3>
+        <p>Los hábitos diarios desarrollan la memoria muscular de los dedos. Marca los días completados:</p>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // Audio Context para Metrónomo y Acordes sintéticos
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    // Metrónomo
+    let isMetroRunning = false;
+    let bpm = 80;
+    let metroTimer = null;
+
+    function updateBpm(val) {
+      bpm = parseInt(val);
+      document.getElementById('bpmValue').innerText = bpm;
+      document.getElementById('bpmSlider').value = bpm;
+      if (isMetroRunning) {
+        stopMetronome();
+        startMetronome();
+      }
+    }
+
+    function setBpm(val) {
+      updateBpm(val);
+    }
+
+    function toggleMetronome() {
+      if (isMetroRunning) {
+        stopMetronome();
+      } else {
+        startMetronome();
+      }
+    }
+
+    function startMetronome() {
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      isMetroRunning = true;
+      document.getElementById('metroBtn').innerText = '⏸ Pausar';
+      document.getElementById('metroBtn').classList.replace('btn-primary', 'btn-accent');
+      
+      const intervalMs = (60 / bpm) * 1000;
+      metroTimer = setInterval(playClick, intervalMs);
+      playClick();
+    }
+
+    function stopMetronome() {
+      isMetroRunning = false;
+      clearInterval(metroTimer);
+      document.getElementById('metroBtn').innerText = '▶ Iniciar Metrónomo';
+      document.getElementById('metroBtn').classList.replace('btn-accent', 'btn-primary');
+    }
+
+    function playClick() {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+
+      const light = document.getElementById('metroLight');
+      light.classList.add('pulse');
+      setTimeout(() => light.classList.remove('pulse'), 80);
+    }
+
+    // Datos de Acordes para ukelele estándar (gCEA)
+    // Cuerdas: [G, C, E, A] (traste)
+    // Frecuencias base aproximadas (Hz): G4=392, C4=261.6, E4=329.6, A4=440
+    const CHORDS_DATA = [
+      { name: 'C', alias: 'Do Mayor', frets: [0, 0, 0, 3], fingers: [0, 0, 0, 3] },
+      { name: 'Am', alias: 'La menor', frets: [2, 0, 0, 0], fingers: [2, 0, 0, 0] },
+      { name: 'F', alias: 'Fa Mayor', frets: [2, 0, 1, 0], fingers: [2, 0, 1, 0] },
+      { name: 'G', alias: 'Sol Mayor', frets: [0, 2, 3, 2], fingers: [0, 1, 3, 2] },
+      { name: 'Em', alias: 'Mi menor', frets: [0, 4, 3, 2], fingers: [0, 3, 2, 1] },
+      { name: 'Dm', alias: 'Re menor', frets: [2, 2, 1, 0], fingers: [2, 3, 1, 0] },
+      { name: 'G7', alias: 'Sol Séptima', frets: [0, 2, 1, 2], fingers: [0, 2, 1, 3] },
+      { name: 'C7', alias: 'Do Séptima', frets: [0, 0, 0, 1], fingers: [0, 0, 0, 1] },
+      { name: 'A', alias: 'La Mayor', frets: [2, 1, 0, 0], fingers: [2, 1, 0, 0] },
+      { name: 'D', alias: 'Re Mayor', frets: [2, 2, 2, 0], fingers: [1, 2, 3, 0] },
+      { name: 'E7', alias: 'Mi Séptima', frets: [1, 2, 0, 2], fingers: [1, 2, 0, 3] },
+      { name: 'Bb', alias: 'Si bemol', frets: [3, 2, 1, 1], fingers: [3, 2, 1, 1] }
+    ];
+
+    function renderFretboard(svgId, frets) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+
+      const width = 100;
+      const height = 110;
+      const leftMargin = 20;
+      const stringSpacing = 20;
+      const fretSpacing = 22;
+      const topMargin = 20;
+
+      let html = '';
+
+      // Cejuela (Nut)
+      html += `<rect x="${leftMargin}" y="${topMargin}" width="${stringSpacing * 3}" height="4" fill="#334155" />`;
+
+      // Trastes horizontales (4 trastes)
+      for (let f = 1; f <= 4; f++) {
+        const y = topMargin + f * fretSpacing;
+        html += `<line x1="${leftMargin}" y1="${y}" x2="${leftMargin + stringSpacing * 3}" y2="${y}" stroke="#94a3b8" stroke-width="1.5" />`;
+      }
+
+      // Cuerdas verticales (G, C, E, A)
+      for (let s = 0; s < 4; s++) {
+        const x = leftMargin + s * stringSpacing;
+        html += `<line x1="${x}" y1="${topMargin}" x2="${x}" y2="${topMargin + fretSpacing * 4}" stroke="#64748b" stroke-width="${2.5 - s * 0.4}" />`;
+      }
+
+      // Puntos de los dedos
+      frets.forEach((fret, stringIndex) => {
+        const x = leftMargin + stringIndex * stringSpacing;
+        if (fret === 0) {
+          // Cuerda al aire
+          html += `<circle cx="${x}" cy="${topMargin - 7}" r="3.5" fill="none" stroke="#0284c7" stroke-width="1.5" />`;
+        } else if (fret > 0) {
+          const y = topMargin + (fret - 0.5) * fretSpacing;
+          html += `<circle cx="${x}" cy="${y}" r="6" fill="#0284c7" />`;
+        }
+      });
+
+      svg.innerHTML = html;
+    }
+
+    function initFretboards() {
+      CHORDS_DATA.slice(0, 7).forEach(chord => {
+        renderFretboard('svg' + chord.name, chord.frets);
+      });
+      // Bb
+      renderFretboard('svgBb', [3, 2, 1, 1]);
+
+      // Render full dictionary
+      const dict = document.getElementById('fullChordGrid');
+      dict.innerHTML = '';
+      CHORDS_DATA.forEach(chord => {
+        const card = document.createElement('div');
+        card.className = 'chord-card';
+        card.onclick = () => playChord(chord.name);
+        card.innerHTML = `
+          <div class="chord-name">${chord.name}</div>
+          <div class="chord-alias">${chord.alias}</div>
+          <svg class="fretboard-svg" viewBox="0 0 100 120" id="dictSvg_${chord.name}"></svg>
+          <small>Frets: ${chord.frets.join(' - ')}</small>
+        `;
+        dict.appendChild(card);
+        setTimeout(() => renderFretboard('dictSvg_' + chord.name, chord.frets), 10);
+      });
+    }
+
+    // Síntesis Web Audio para escuchar el rasgueo del acorde
+    function playChord(chordName) {
+      const chord = CHORDS_DATA.find(c => c.name === chordName);
+      if (!chord) return;
+
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+
+      // Frecuencias base en orden G4, C4, E4, A4
+      const baseFreqs = [392.00, 261.63, 329.63, 440.00];
+
+      chord.frets.forEach((fret, index) => {
+        const freq = baseFreqs[index] * Math.pow(2, fret / 12);
+        const strumDelay = index * 0.04; // Pequeño retardo imitando rasgueo
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + strumDelay);
+
+        gain.gain.setValueAtTime(0.001, ctx.currentTime + strumDelay);
+        gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + strumDelay + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + strumDelay + 1.2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + strumDelay);
+        osc.stop(ctx.currentTime + strumDelay + 1.25);
+      });
+    }
+
+    // Cambio de módulos
+    function showModule(modId) {
+      document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById(modId);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Calendario 30 días
+    function initCalendar() {
+      const cal = document.getElementById('calendarGrid');
+      cal.innerHTML = '';
+      const days = [
+        'Afinación & gCEA', 'Postura & Rasgueo', 'Acorde Do (C)', 'Acorde La m (Am)',
+        'Bucle C - Am', 'Acorde Fa (F)', 'Stand By Me (intro)', 'Acorde Sol (G)',
+        'Truco dedo 3 en G', 'Bucle C-G-Am-F', 'Rasgueo Pop 4/4', 'Canción Limón y Sal',
+        'Repaso semana 2', 'Control de sonido limpio', 'Calypso Strum (Paso 1)', 'Calypso Strum (Paso 2)',
+        'Calypso sobre C y Am', 'Riptide (Estrofa)', 'Riptide (Estribillo)', 'Riptide completa',
+        'Acorde Mi menor (Em)', 'Somewhere Over Rainbow', 'Intro IZ completa', 'Técnica del Chuck',
+        'Chuck con ritmo Pop', 'Mini-cejilla Si bemol', 'Arpegio P-I-M-I', 'Hallelujah en 6/8',
+        'Repaso repertorio', '¡Graduación y grabación!'
+      ];
+
+      days.forEach((desc, i) => {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'cal-day';
+        dayDiv.innerHTML = `
+          <div class="day-num">Día ${i + 1}</div>
+          <div class="day-desc">${desc}</div>
+        `;
+        dayDiv.onclick = () => {
+          dayDiv.classList.toggle('completed');
+        };
+        cal.appendChild(dayDiv);
+      });
+    }
+
+    window.onload = () => {
+      initFretboards();
+      initCalendar();
+    };
+  </script>
+</body>
+</html>
