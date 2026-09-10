@@ -24,7 +24,7 @@
 ## 🚀 Cómo Empezar Hoy Mismo (Día 1)
 
 1. **Abre la [App Web en GitHub Pages](https://jesdeltoro.github.io/curso-ukelele/)** o el archivo [index.html](index.html) localmente.
-2. Descarga la aplicación **GuitarTuna** en tu móvil y afina tu ukelele en afinación estándar **gCEA**:
+2. Abre el **[Afinador gratuito de ukelele](afinador.html)** en tu móvil. Puedes instalarlo desde el navegador y afina en estándar **gCEA**:
    - Cuerda 4 (superior): **Sol (G)**
    - Cuerda 3: **Do (C)**
    - Cuerda 2: **Mi (E)**

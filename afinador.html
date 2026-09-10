@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Afinador gratuito para ukelele en afinación estándar gCEA.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>Afinador de Ukelele</title>
+  <style>
+    :root { --ink: #0f172a; --muted: #64748b; --teal: #0f766e; --aqua: #14b8a6; --paper: #f0fdfa; --card: #fff; --line: #ccfbf1; --good: #16a34a; --warn: #ea580c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; min-height: 100svh; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: radial-gradient(circle at top, #ccfbf1 0, var(--paper) 38%, #f8fafc 100%); }
+    .app { width: min(100%, 520px); min-height: 100svh; margin: 0 auto; padding: 1.5rem 1rem 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    h1 { margin: 0; font-size: clamp(1.5rem, 7vw, 2rem); letter-spacing: -.04em; }
+    .back { color: var(--teal); font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .intro { margin: 0; color: var(--muted); line-height: 1.5; }
+    .panel { background: rgba(255,255,255,.92); border: 1px solid var(--line); box-shadow: 0 18px 40px rgba(15, 118, 110, .12); border-radius: 24px; padding: 1.25rem; }
+    .status { display: flex; align-items: center; justify-content: center; min-height: 2rem; margin: 0 0 .75rem; color: var(--muted); font-weight: 700; text-align: center; }
+    .note { text-align: center; font-size: 5.25rem; font-weight: 800; letter-spacing: -.08em; line-height: 1; color: var(--teal); font-variant-numeric: tabular-nums; }
+    .note small { display: block; font-size: 1rem; letter-spacing: 0; color: var(--muted); margin-top: .75rem; }
+    .meter { position: relative; height: 44px; margin: 1.5rem .4rem .75rem; border-radius: 999px; background: linear-gradient(90deg, #fb7185, #fb923c 25%, #22c55e 43%, #22c55e 57%, #fb923c 75%, #fb7185); overflow: hidden; }
+    .meter::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(255,255,255,.75) calc(25% - 1px) 25%); }
+    .needle { position: absolute; z-index: 1; left: 50%; top: -5px; width: 6px; height: 54px; border-radius: 8px; background: var(--ink); transform: translateX(-50%); transition: left .08s linear; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+    .meter-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; }
+    .cents { min-height: 1.5rem; margin: 1rem 0 0; text-align: center; font-weight: 800; color: var(--muted); }
+    .controls { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+    button { min-height: 52px; border: 0; border-radius: 14px; padding: .75rem 1rem; font: inherit; font-weight: 800; cursor: pointer; }
+    .primary { color: white; background: var(--teal); box-shadow: 0 8px 16px rgba(15,118,110,.24); }
+    .primary:disabled { background: #94a3b8; cursor: wait; box-shadow: none; }
+    .secondary { color: var(--teal); background: #ccfbf1; }
+    .strings { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+    .string { min-height: 74px; background: #f8fafc; border: 2px solid #e2e8f0; color: var(--ink); }
+    .string span { display: block; color: var(--muted); font-size: .72rem; margin-top: .15rem; }
+    .string.active { color: white; background: var(--teal); border-color: var(--teal); }
+    .string.active span { color: #ccfbf1; }
+    .help { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .install { display: none; }
+    .install.visible { display: block; }
+    .ok { color: var(--good); } .low, .high { color: var(--warn); }
+    @media (max-width: 360px) { .app { padding: 1rem .75rem; } .panel { padding: 1rem; } .note { font-size: 4.5rem; } }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>🎵 Afinador de ukelele</h1>
+      <a class="back" href="index.html">Curso</a>
+    </header>
+    <p class="intro">Afinación estándar reentrante <strong>g–C–E–A</strong>. Toca una sola cuerda cerca del micrófono.</p>
+
+    <section class="panel" aria-live="polite">
+      <p class="status" id="status">Pulsa «Empezar a afinar».</p>
+      <div class="note" id="note">—<small id="frequency">Esperando sonido</small></div>
+      <div class="meter" aria-label="Medidor de afinación"><div class="needle" id="needle"></div></div>
+      <div class="meter-labels"><span>Grave</span><span>En tono</span><span>Aguda</span></div>
+      <p class="cents" id="cents">—</p>
+    </section>
+
+    <section class="strings" aria-label="Selecciona una cuerda como referencia">
+      <button class="string" data-note="G4">G<span>Sol · 392 Hz</span></button>
+      <button class="string" data-note="C4">C<span>Do · 262 Hz</span></button>
+      <button class="string" data-note="E4">E<span>Mi · 330 Hz</span></button>
+      <button class="string" data-note="A4">A<span>La · 440 Hz</span></button>
+    </section>
+
+    <section class="controls">
+      <button class="primary" id="startButton">🎙️ Empezar a afinar</button>
+      <button class="secondary" id="toneButton">🔊 Escuchar cuerda seleccionada</button>
+      <button class="secondary install" id="installButton">⬇️ Instalar afinador</button>
+    </section>
+    <p class="help" id="help">No se graba ni se envía el audio: el análisis ocurre en el propio teléfono. En iPhone, abre esta página en Safari y usa Compartir → «Añadir a pantalla de inicio».</p>
+  </main>
+
+  <script>
+    const STRINGS = { G4: { name: 'Sol', frequency: 392.00 }, C4: { name: 'Do', frequency: 261.63 }, E4: { name: 'Mi', frequency: 329.63 }, A4: { name: 'La', frequency: 440.00 } };
+    let selected = 'G4', audioContext, analyser, microphone, raf, deferredInstall;
+    const ui = Object.fromEntries(['status','note','frequency','needle','cents','startButton','toneButton','installButton','help'].map(id => [id, document.getElementById(id)]));
+
+    function selectString(note) {
+      selected = note;
+      document.querySelectorAll('.string').forEach(button => button.classList.toggle('active', button.dataset.note === note));
+      if (!analyser) { ui.note.textContent = note.slice(0, 1); ui.frequency.textContent = `${STRINGS[note].name} · ${STRINGS[note].frequency.toFixed(1)} Hz`; }
+    }
+
+    function autocorrelate(buffer, sampleRate) {
+      let rms = Math.sqrt(buffer.reduce((sum, value) => sum + value * value, 0) / buffer.length);
+      if (rms < 0.012) return -1;
+      let start = 0, end = buffer.length - 1;
+      while (start < buffer.length / 2 && Math.abs(buffer[start]) < 0.2) start++;
+      while (end > buffer.length / 2 && Math.abs(buffer[end]) < 0.2) end--;
+      const trimmed = buffer.slice(start, end);
+      const correlations = new Float32Array(trimmed.length);
+      for (let lag = 0; lag < trimmed.length; lag++) {
+        for (let i = 0; i < trimmed.length - lag; i++) correlations[lag] += trimmed[i] * trimmed[i + lag];
+      }
+      let dip = 0;
+      while (dip + 1 < correlations.length && correlations[dip] > correlations[dip + 1]) dip++;
+      let peak = -1, max = -Infinity;
+      for (let i = dip; i < correlations.length; i++) if (correlations[i] > max) { max = correlations[i]; peak = i; }
+      if (peak <= 0) return -1;
+      const previous = correlations[peak - 1] || 0, current = correlations[peak], next = correlations[peak + 1] || 0;
+      const shift = (next - previous) / (2 * (2 * current - next - previous));
+      return sampleRate / (peak + (Number.isFinite(shift) ? shift : 0));
+    }
+
+    function closestString(frequency) {
+      return Object.entries(STRINGS).map(([note, item]) => ({ note, ...item, cents: 1200 * Math.log2(frequency / item.frequency) })).sort((a, b) => Math.abs(a.cents) - Math.abs(b.cents))[0];
+    }
+
+    function updateTuner() {
+      const data = new Float32Array(analyser.fftSize);
+      analyser.getFloatTimeDomainData(data);
+      const detected = autocorrelate(data, audioContext.sampleRate);
+      if (detected > 80 && detected < 600) {
+        const result = closestString(detected);
+        const cents = Math.round(result.cents), position = Math.max(3, Math.min(97, 50 + cents / 50 * 47));
+        ui.note.textContent = result.note.charAt(0);
+        ui.frequency.textContent = `${detected.toFixed(1)} Hz · objetivo ${result.frequency.toFixed(1)} Hz`;
+        ui.needle.style.left = `${position}%`;
+        ui.cents.textContent = `${cents > 0 ? '+' : ''}${cents} cents`;
+        ui.status.className = 'status';
+        if (Math.abs(cents) <= 5) { ui.status.textContent = `✓ ${result.name} afinada`; ui.status.classList.add('ok'); }
+        else if (cents < 0) { ui.status.textContent = `${result.name}: sube un poco la tensión`; ui.status.classList.add('low'); }
+        else { ui.status.textContent = `${result.name}: baja un poco la tensión`; ui.status.classList.add('high'); }
+      } else { ui.status.textContent = 'Toca una cuerda, una por una.'; ui.status.className = 'status'; }
+      raf = requestAnimationFrame(updateTuner);
+    }
+
+    async function startTuner() {
+      try {
+        ui.startButton.disabled = true;
+        ui.startButton.textContent = 'Activando micrófono…';
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        await audioContext.resume();
+        analyser = audioContext.createAnalyser(); analyser.fftSize = 2048;
+        microphone = audioContext.createMediaStreamSource(stream); microphone.connect(analyser);
+        ui.startButton.textContent = '🎙️ Afinando';
+        ui.status.textContent = 'Micrófono activo. Toca una cuerda.';
+        updateTuner();
+      } catch (error) {
+        ui.startButton.disabled = false; ui.startButton.textContent = '🎙️ Empezar a afinar';
+        ui.status.textContent = 'No se pudo usar el micrófono. Permítelo en el navegador y vuelve a intentarlo.';
+        ui.help.textContent = 'El afinador necesita HTTPS y permiso de micrófono. La versión publicada en GitHub Pages cumple ambos requisitos.';
+      }
+    }
+
+    function playReferenceTone() {
+      const context = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+      audioContext = context;
+      const oscillator = context.createOscillator(), gain = context.createGain();
+      oscillator.frequency.value = STRINGS[selected].frequency; oscillator.type = 'sine';
+      gain.gain.setValueAtTime(0.0001, context.currentTime); gain.gain.exponentialRampToValueAtTime(0.16, context.currentTime + .03); gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 1.2);
+      oscillator.connect(gain).connect(context.destination); oscillator.start(); oscillator.stop(context.currentTime + 1.25);
+    }
+
+    document.querySelectorAll('.string').forEach(button => button.addEventListener('click', () => selectString(button.dataset.note)));
+    ui.startButton.addEventListener('click', startTuner); ui.toneButton.addEventListener('click', playReferenceTone);
+    window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); deferredInstall = event; ui.installButton.classList.add('visible'); });
+    ui.installButton.addEventListener('click', async () => { if (!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice; deferredInstall = null; ui.installButton.classList.remove('visible'); });
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('service-worker.js'));
+    selectString(selected);
+  </script>
+</body>
+</html>

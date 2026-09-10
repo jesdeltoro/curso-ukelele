@@ -1,0 +1,11 @@
+{
+  "name": "Afinador de Ukelele",
+  "short_name": "Afinador Uke",
+  "description": "Afinador gratuito para ukelele en afinación estándar gCEA.",
+  "lang": "es",
+  "start_url": "./afinador.html",
+  "display": "standalone",
+  "background_color": "#f0fdfa",
+  "theme_color": "#0f766e",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
