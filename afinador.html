@@ -24,7 +24,7 @@
     .note small { display: block; font-size: 1rem; letter-spacing: 0; color: var(--muted); margin-top: .75rem; }
     .meter { position: relative; height: 44px; margin: 1.5rem .4rem .75rem; border-radius: 999px; background: linear-gradient(90deg, #fb7185, #fb923c 25%, #22c55e 43%, #22c55e 57%, #fb923c 75%, #fb7185); overflow: hidden; }
     .meter::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), rgba(255,255,255,.75) calc(25% - 1px) 25%); }
-    .needle { position: absolute; z-index: 1; left: 50%; top: -5px; width: 6px; height: 54px; border-radius: 8px; background: var(--ink); transform: translateX(-50%); transition: left .08s linear; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+    .needle { position: absolute; z-index: 1; left: 50%; top: -5px; width: 6px; height: 54px; border-radius: 8px; background: var(--ink); transform: translateX(-50%); transition: left .16s ease-out; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
     .meter-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; }
     .cents { min-height: 1.5rem; margin: 1rem 0 0; text-align: center; font-weight: 800; color: var(--muted); }
     .controls { display: grid; grid-template-columns: 1fr; gap: .75rem; }
@@ -78,6 +78,7 @@
   <script>
     const STRINGS = { G4: { name: 'Sol', frequency: 392.00 }, C4: { name: 'Do', frequency: 261.63 }, E4: { name: 'Mi', frequency: 329.63 }, A4: { name: 'La', frequency: 440.00 } };
     let selected = 'G4', audioContext, analyser, microphone, raf, deferredInstall;
+    let recentFrequencies = [], smoothedFrequency = null;
     const ui = Object.fromEntries(['status','note','frequency','needle','cents','startButton','toneButton','installButton','help'].map(id => [id, document.getElementById(id)]));
 
     function selectString(note) {
@@ -111,22 +112,39 @@
       return Object.entries(STRINGS).map(([note, item]) => ({ note, ...item, cents: 1200 * Math.log2(frequency / item.frequency) })).sort((a, b) => Math.abs(a.cents) - Math.abs(b.cents))[0];
     }
 
+    function smoothPitch(frequency) {
+      // La mediana descarta lecturas aisladas y el promedio progresivo evita que la aguja salte.
+      recentFrequencies.push(frequency);
+      if (recentFrequencies.length > 7) recentFrequencies.shift();
+      const ordered = [...recentFrequencies].sort((a, b) => a - b);
+      const median = ordered[Math.floor(ordered.length / 2)];
+      const changedString = smoothedFrequency && Math.abs(Math.log2(median / smoothedFrequency)) > 0.25;
+      smoothedFrequency = !smoothedFrequency || changedString ? median : smoothedFrequency * 0.78 + median * 0.22;
+      return smoothedFrequency;
+    }
+
     function updateTuner() {
       const data = new Float32Array(analyser.fftSize);
       analyser.getFloatTimeDomainData(data);
       const detected = autocorrelate(data, audioContext.sampleRate);
       if (detected > 80 && detected < 600) {
-        const result = closestString(detected);
+        const stableFrequency = smoothPitch(detected);
+        const result = closestString(stableFrequency);
         const cents = Math.round(result.cents), position = Math.max(3, Math.min(97, 50 + cents / 50 * 47));
         ui.note.textContent = result.note.charAt(0);
-        ui.frequency.textContent = `${detected.toFixed(1)} Hz · objetivo ${result.frequency.toFixed(1)} Hz`;
+        ui.frequency.textContent = `${stableFrequency.toFixed(1)} Hz · objetivo ${result.frequency.toFixed(1)} Hz`;
         ui.needle.style.left = `${position}%`;
         ui.cents.textContent = `${cents > 0 ? '+' : ''}${cents} cents`;
         ui.status.className = 'status';
         if (Math.abs(cents) <= 5) { ui.status.textContent = `✓ ${result.name} afinada`; ui.status.classList.add('ok'); }
         else if (cents < 0) { ui.status.textContent = `${result.name}: sube un poco la tensión`; ui.status.classList.add('low'); }
         else { ui.status.textContent = `${result.name}: baja un poco la tensión`; ui.status.classList.add('high'); }
-      } else { ui.status.textContent = 'Toca una cuerda, una por una.'; ui.status.className = 'status'; }
+      } else {
+        recentFrequencies = [];
+        smoothedFrequency = null;
+        ui.status.textContent = 'Toca una cuerda, una por una.';
+        ui.status.className = 'status';
+      }
       raf = requestAnimationFrame(updateTuner);
     }
 
@@ -137,7 +155,7 @@
         const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         await audioContext.resume();
-        analyser = audioContext.createAnalyser(); analyser.fftSize = 2048;
+        analyser = audioContext.createAnalyser(); analyser.fftSize = 4096;
         microphone = audioContext.createMediaStreamSource(stream); microphone.connect(analyser);
         ui.startButton.textContent = '🎙️ Afinando';
         ui.status.textContent = 'Micrófono activo. Toca una cuerda.';
